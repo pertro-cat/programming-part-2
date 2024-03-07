@@ -1,24 +1,19 @@
 import unittest
 import sys
-sys.path.append('c:/Visual Python/lab_1/lab_2/src/')
-from lab2_L3 import max_hamster
+sys.path.append('c:/Visual Python/lab_1/lab_2')
+from src.lab2_L3 import max_hamsters_with_sort
 
+class TestMaxHamstersWithBinarySort(unittest.TestCase):
+   
+    
+    def test_example1(self):
+        self.assertEqual(max_hamsters_with_sort(7, 3, [[1, 2], [2, 2], [3, 1]]), 2, "Приклад 1 не пройдено")
+    
+    def test_example2(self):
+        self.assertEqual(max_hamsters_with_sort(19, 4, [[5, 0], [2, 2], [1, 4], [5, 1]]), 3, "Приклад 2 не пройдено")
+    
+    def test_example3(self):
+        self.assertEqual(max_hamsters_with_sort(2, 2, [[1, 50000], [1, 60000]]), 1, "Приклад 3 не пройдено")
 
-class TestMaxHamster(unittest.TestCase):
-    def test_example_1(self):
-        S, C = 7, 3
-        hamsters = [[1, 2], [2, 2], [3, 1]]
-        self.assertEqual(max_hamster(S, C, hamsters), 2, "Example 1 failed")
-
-    def test_example_2(self):
-        S, C = 19, 4
-        hamsters = [[5, 0], [2, 2], [1, 4], [5, 1]]
-        self.assertEqual(max_hamster(S, C, hamsters), 3, "Example 2 failed")
-
-    def test_example_3(self):
-        S, C = 2, 2
-        hamsters = [[1, 50000], [1, 60000]]
-        self.assertEqual(max_hamster(S, C, hamsters), 1, "Example 3 failed")
-
-if __name__ == '__main__':
-    unittest.main()
+# Запуск тестів
+unittest.main(argv=['first-arg-is-ignored'], exit=False)
