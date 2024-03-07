@@ -15,5 +15,4 @@ class TestMaxHamstersWithBinarySort(unittest.TestCase):
     def test_example3(self):
         self.assertEqual(max_hamsters_with_sort(2, 2, [[1, 50000], [1, 60000]]), 1, "Приклад 3 не пройдено")
 
-# Запуск тестів
 unittest.main(argv=['first-arg-is-ignored'], exit=False)
