@@ -1,38 +1,42 @@
-def max_hamster(S, C, hamsters):
-    def swap(i, j):
-        hamsters[i], hamsters[j] = hamsters[j], hamsters[i]
+def binary_search_hamster(arr, item, start, end):
+    while start <= end:
+        mid = start + (end - start) // 2
+        if arr[mid][1] < item[1]:
+            start = mid + 1
+        elif arr[mid][1] > item[1]:
+            end = mid - 1
+        else:
+            return mid
+    return start 
 
-    def partition(left, right):
-        pivot = hamsters[right][1]
-        while True:
-            while left <= right and hamsters[left][1] < pivot:
-                left += 1
-            while left <= right and hamsters[right][1] >= pivot:
-                right -= 1
-            if left <= right:
-                swap(left, right)
-                left += 1
-            else:
-                return right
+def hamster_sort(arr):
+    for i in range(1, len(arr)):
+        temp = arr[i]
+        pos = binary_search_hamster(arr, temp, 0, i - 1)
+        arr = arr[:pos] + [temp] + arr[pos:i] + arr[i+1:]
+    return arr
 
-    def quick_sort(left, right):
-        if left < right:
-            pivot_index = partition(left, right)
-            quick_sort(left, pivot_index)
-            quick_sort(pivot_index + 1, right)
-
-    quick_sort(0, C - 1)
-
+def max_hamsters_with_sort(S, C, hamsters):
+    sorted_hamsters = hamster_sort(hamsters)
+    
+    max_hamsters = 0
     total_food = 0
-    count = 0
+
     for i in range(C):
-        H, G = hamsters[i]
-        additional_food = H + G * count
-        if total_food + additional_food <= S:
-            total_food += additional_food
-            count += 1
+        additional_food = sorted_hamsters[i][1] * max_hamsters
+        if total_food + sorted_hamsters[i][0] + additional_food <= S:
+            total_food += sorted_hamsters[i][0] + additional_food
+            max_hamsters += 1
         else:
             break
-    return count
+
+    return max_hamsters
+
+
+example1_binary = max_hamsters_with_sort(7, 3, [[1, 2], [2, 2], [3, 1]])  
+example2_binary = max_hamsters_with_sort(19, 4, [[5, 0], [2, 2], [1, 4], [5, 1]])  
+example3_binary = max_hamsters_with_sort(2, 2, [[1, 50000], [1, 60000]])  
+
+print(f'Приклад 1: {example1_binary}\nПриклад 2: {example2_binary}\nПриклад 3: {example3_binary}')
 
 
