@@ -1,39 +1,54 @@
-NO_OF_CHARS = 256
+def transition_table(nedle):
+    """"
+    This function builds the transition table for
+    the finite automaton approach.
+    """
+    m = len(nedle)
+    alphabet = set(nedle)
+    transition_table = [{ch: 0 for ch in alphabet} for _ in range(m + 1)]
 
-def nextState(haystack, m, state, x):
-    if state < m and x == ord(needle[state]):
-        return state + 1
-    i = 0
-    for ns in range(state, 0, -1):
-        if needle[ns - 1] == x:
-            while i < ns - 1:
-                if needle[i] != needle[state - ns + 1 + i]:
-                    break
-                i += 1
-            if i == ns - 1:
-                return ns
-    return 0
-
-def automaton_matcher(needle, n):
-    global NO_OF_CHARS
-    m = len(needle)
-    n = len(haystack)
-    TF = [[0 for i in range(NO_OF_CHARS)] for j in range(m + 1)]
     for state in range(m + 1):
-        for x in range (NO_OF_CHARS):
-            z = nextState(needle, m, state, x)
-            TF[state][x] = z
-    return TF
+        for ch in alphabet:
+            next_state = 0
+            if state < m and ch == nedle[state]:
+                next_state = state + 1
+            else:
+                if state > 0:
+                    prefix = nedle[:state] + ch
+                    for k in range(1, state + 1):
+                        if prefix.endswith(nedle[:k]):
+                            next_state = k
+            transition_table[state][ch] = next_state
+    return transition_table
 
-def search_inText(needle, haystack, m, n):
-    global NO_OF_CHARS
-    TF = automaton_matcher(needle, haystack)
+def finite_automaton(haystack, nedle, transition_table):
+    """
+    This function uses a finite automaton to find and return
+    all start indices of the substring 'needle' in 'haystack'.
+    """
+    if not nedle:
+        return -1
+    if not haystack:
+        return -1
+    if len(nedle) > len(haystack):
+        return -1
+
+
+    m = len(nedle)
+    n = len(haystack)
     state = 0
-    found_indexes = []
+    results = []
+
     for i in range(n):
-        state = TF[state][ord(haystack[i])]
+        current_char = haystack[i]
+        if current_char in transition_table[state]:
+            state = transition_table[state][current_char]
+        else:
+            state = 0
+
         if state == m:
-            found_indexes.append(i - m + 1)
-    return found_indexes if found_indexes else None
+            start_index = i - m + 1
+            results.append(start_index)
+            state = transition_table[state - 1][haystack[i]]
 
-
+    return results
