@@ -1,100 +1,61 @@
-import pandas as pd
+import csv
 import numpy as np
-from typing import List, Tuple
 
-def read_input_data(file_path: str) -> List[Tuple[int, int, int]]:
+def floyd_warshall_find_distance(matrix):
     """
-    Reads input data from a file and returns a list of edges.
+    The function uses the Floyd-Warshall algorithm to find the shortest
+     paths between all pairs of vertices in a graph.
 
     Parameters:
-    file_path (str): The path to the input file.
+    matrix (list of list of int): Distance matrix, where matrix[i][j]
+    corresponds to the distance between vertices i and j.
 
     Returns:
-    List[Tuple[int, int, int]]: A list of tuples representing the edges in the graph.
+    matrix (list of list of int): Updated distance matrix after executing
+    the Floyd-Warshall algorithm.
     """
-    data_frame = pd.read_csv(file_path)
-    matrix = data_frame.values
-    edges = []
     num_vertices = len(matrix)
-    for row_index in range(num_vertices):
-        for column_index in range(row_index + 1, len(matrix[row_index])):
-            if matrix[row_index][column_index] > 0:
-                edges.append((row_index, column_index, matrix[row_index][column_index]))
-    return edges
+    for intermediate_vertex in range(num_vertices):
+        for start_vertex in range(num_vertices):
+            for end_vertex in range(num_vertices):
+                matrix[start_vertex][end_vertex] = min(matrix[start_vertex][end_vertex],
+                   matrix[start_vertex][intermediate_vertex] + matrix[intermediate_vertex][end_vertex])
+    return matrix
 
-class Graph:
-    """A class to represent a graph."""
-    def __init__(self, size: int):
-        """
-        Initializes a graph with a given size.
 
-        Parameters:
-        size (int): The number of vertices in the graph.
-        """
-        self.root = list(range(size))
-        self.rank = [1] * size
-        self.edges = []
+def calculate_cable_length(matrix):
+    """
+    The function calculates the total length of the cable needed to cover
+     all distances in the matrix.
 
-    def find_the_root_in_vertex(self, vertex: int) -> int:
-        """
-        Finds the root of a vertex.
+    Parameters:
+    matrix (list of list of int): Distance matrix, where matrix[i][j]
+    corresponds to the distance between vertices i and j.
 
-        Parameters:
-        vertex (int): The vertex to find the root of.
+    Returns:
+    total_length (float): Total length of the cable.
+    """
+    total_length = 0
+    for row in matrix:
+        total_length += sum(row)
+    return total_length / 2
 
-        Returns:
-        int: The root of the vertex.
-        """
-        if self.root[vertex] != vertex:
-            self.root[vertex] = self.find(self.root[vertex])
-        return self.root[vertex]
 
-    def union_two_vertices(self, vertex1: int, vertex2: int) -> bool:
-        """
-        Unites two vertices.
+def read_csv_file(file_name):
+    """
+    The function reads a CSV file and converts it into a matrix.
 
-        Parameters:
-        vertex1 (int): The first vertex.
-        vertex2 (int): The second vertex.
+    Parameters:
+    file_name (str): Name of the CSV file.
 
-        Returns:
-        bool: True if the vertices were united, False otherwise.
-        """
-        root_vertex1 = self.find(vertex1) # root is the representative of the set
-        root_vertex2 = self.find(vertex2)
-        if root_vertex1 != root_vertex2:
-            if self.rank[root_vertex1] > self.rank[root_vertex2]:
-                self.root[root_vertex2] = root_vertex1
-            elif self.rank[root_vertex1] < self.rank[root_vertex2]:
-                self.root[root_vertex1] = root_vertex2
-            else:
-                self.root[root_vertex1] = root_vertex2
-                if self.rank[root_vertex1] == self.rank[root_vertex2]:
-                    self.rank[root_vertex2] += 1
-            return True
-        return False
+    Returns:
+    matrix (list of list of int): Matrix obtained from the CSV file.
+    """
+    with open(file_name, 'r') as file:
+        reader = csv.reader(file)
+        matrix = list(reader)
+    matrix = [[int(value) for value in row] for row in matrix]
+    return matrix
 
-    def kruskal_minimum_spanning(self, num_vertices: int) -> float:
-        """
-        Finds the minimum spanning tree of a graph using Kruskal's algorithm.
 
-        Parameters:
-        num_vertices (int): The number of vertices in the graph.
 
-        Returns:
-        float: The weight of the minimum spanning tree, or infinity if no such tree exists.
-        """
-        self.edges.sort(key=lambda edge: edge[2])
-        minimum_spanning_tree_weight = 0
-        minimum_spanning_tree_edges = 0
-
-        for edge_start, edge_end, weight in self.edges:
-            if self.union(edge_start, edge_end):
-                minimum_spanning_tree_weight += weight
-                minimum_spanning_tree_edges += 1
-                if minimum_spanning_tree_edges == num_vertices - 1:
-                    break
-        if minimum_spanning_tree_edges < num_vertices - 1:
-            return float('inf')
-
-        return minimum_spanning_tree_weight
