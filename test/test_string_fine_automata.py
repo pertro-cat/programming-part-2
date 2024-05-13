@@ -1,6 +1,4 @@
 import unittest
-import sys
-sys.path.append('c:/Python/PycharmProjects/programming_part2')
 
 from src.string_finite_automata import transition_table, finite_automaton
 
