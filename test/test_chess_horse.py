@@ -1,11 +1,9 @@
 import unittest
-import sys
-sys.path.append('c:/Python/PycharmProjects/programming_part2')
 from src.chess_horse import read_input, Inside, minStep, write_output, main
 
 class TestChessHorse(unittest.TestCase):
     def test_read_input(self):
-        N, src, dest = read_input('test_input.txt')
+        N, src, dest = read_input('input.txt')
         self.assertEqual(N, 8)
         self.assertEqual(src, (7, 0))
         self.assertEqual(dest, (0, 7))
