@@ -33,10 +33,6 @@ def max_hamsters_with_sort(S, C, hamsters):
     return max_hamsters
 
 
-example1_binary = max_hamsters_with_sort(7, 3, [[1, 2], [2, 2], [3, 1]])  
-example2_binary = max_hamsters_with_sort(19, 4, [[5, 0], [2, 2], [1, 4], [5, 1]])  
-example3_binary = max_hamsters_with_sort(2, 2, [[1, 50000], [1, 60000]])  
 
-print(f'Приклад 1: {example1_binary}\nПриклад 2: {example2_binary}\nПриклад 3: {example3_binary}')
 
 
