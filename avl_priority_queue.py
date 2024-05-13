@@ -9,17 +9,16 @@ class Node:
 class AVLPriorityQueue:
     def __init__(self):
         self.root = None
-
     def insert(self, value, priority):
         self.root = self._insert(self.root, value, priority)
 
     def _insert(self, node, value, priority):
         if not node:
             return Node(value, priority)
-        elif priority > node.priority:
-            node.left = self._insert(node.left, value, priority)
-        else:
+        elif priority < node.priority:
             node.right = self._insert(node.right, value, priority)
+        else:
+            node.left = self._insert(node.left, value, priority)
 
         node.height = 1 + max(self._height(node.left), self._height(node.right))
 
@@ -39,17 +38,17 @@ class AVLPriorityQueue:
 
     def _rotate_left(self, z):
         y = z.right
-        T2 = y.left
+        A = y.left
         y.left = z
-        z.right = T2
+        z.right = A
         z.height = 1 + max(self._height(z.left), self._height(z.right))
         y.height = 1 + max(self._height(y.left), self._height(y.right))
         return y
 
     def _rotate_right(self, y):
         x = y.left
-        T3 = x.right
-        y.left = T3
+        B = x.right
+        y.left = B
         x.right = y
         y.height = 1 + max(self._height(y.left), self._height(y.right))
         x.height = 1 + max(self._height(x.left), self._height(x.right))
@@ -69,21 +68,36 @@ class AVLPriorityQueue:
         if self.root is None:
             return None
         value = self.root.value
-        self.root = self._remove(self.root)
+        self.root = self._remove(self.root, value)
         return value
 
-    def _remove(self, node):
-        if node.left is None:
-            return node.right
-        node.left = self._remove(node.left)
-        node.height = 1 + max(self._height(node.left), self._height(node.right))
-        balance = self._balance(node)
-        if balance < -1 and self._balance(node.right) <= 0:
-            return self._rotate_left(node)
-        if balance < -1 and self._balance(node.right) > 0:
-            node.right = self._rotate_right(node.right)
-            return self._rotate_left(node)
-        return node
+    def _remove(self, root, value):
+        if not root:
+            return root
+        elif value < root.value:
+            root.left = self._remove(root.left, value)
+        elif value > root.value:
+            root.right = self._remove(root.right, value)
+        else:
+            if root.left is None:
+                return root.right
+            elif root.right is None:
+                return root.left
+            root.value = self._min_value_node(root.right)
+            root.right = self._remove(root.right, root.value)
+        root.height = 1 + max(self._height(root.left), self._height(root.right))
+        balance = self._balance(root)
+        if balance > 1 and self._balance(root.left) >= 0:
+            return self._rotate_right(root)
+        if balance < -1 and self._balance(root.right) <= 0:
+            return self._rotate_left(root)
+        if balance > 1 and self._balance(root.left) < 0:
+            root.left = self._rotate_left(root.left)
+            return self._rotate_right(root)
+        if balance < -1 and self._balance(root.right) > 0:
+            root.right = self._rotate_right(root.right)
+            return self._rotate_left(root)
+        return root
 
     def peek(self):
         if self.root is None:
@@ -97,3 +111,6 @@ class AVLPriorityQueue:
         result.extend(self.traverse(node.left))
         result.extend(self.traverse(node.right))
         return result
+
+
+
