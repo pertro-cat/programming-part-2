@@ -1,12 +1,6 @@
 import unittest
-import sys
 import tempfile
-from src.network_game import main, gamsrv_in, gamsrv_out
-import os
-
-sys.path.append('c:/Python/PycharmProjects/programming_part2')
-from src.network_game import ping_with_floyd_warshall, find_optimal_server_location
-
+from src.network_game import find_optimal_server_location as find_optimal_server_location
 
 
 class TestNetworkGame(unittest.TestCase):
@@ -45,7 +39,8 @@ class TestNetworkGame(unittest.TestCase):
         result = find_optimal_server_location(num_nodes, edges, client_indices)
         self.assertEqual(result, float('inf'))
 
-    def test_read_write_file_error_handling(self):
+    class TestNetworkGame(unittest.TestCase):
+      def test_read_write_file_error_handling(self):
         with self.assertRaises(IOError):
             with tempfile.NamedTemporaryFile(delete=False) as temp:
                 temp.write(b'6 6\n1 2 6\n1 3 10\n3 4 80\n4 5 50\n5 6 20\n2 3 40\n2 4 100\n')
@@ -66,7 +61,6 @@ class TestNetworkGame(unittest.TestCase):
                 os.remove(new_input_name)
                 network_game.gamsrv_in = old_input_name
                 network_game.gamsrv_out = old_output_name
-
 
 
 
